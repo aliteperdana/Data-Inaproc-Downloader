@@ -1,0 +1,23 @@
+# Daftar link yang akan diunduh. Satu link per baris.
+# Baris kosong dan baris berawalan # diabaikan.
+#
+# Dua format yang bisa dipakai:
+#   https://...                    -> nama file otomatis dari link
+#   Nama Sendiri | https://...     -> nama file memakai "Nama Sendiri"
+#
+# Contoh dengan nama sendiri (hapus tanda # untuk mengaktifkan):
+# Afirmasi PDN Ringkasan | https://data.inaproc.id/afirmasi-pdn?tahun=2026&jenis=3&instansi=D376
+
+# Realisasi RUP
+https://data.inaproc.id/realisasi-rup?tahun=2026&section=detail&jenis_klpd=3&instansi=D376
+
+# Afirmasi PDN
+Afirmasi_ringkasan | https://data.inaproc.id/afirmasi-pdn?tahun=2026&jenis=3&instansi=D376
+Afirmasi_perencanaan | https://data.inaproc.id/afirmasi-pdn?tahun=2026&jenis=3&instansi=D376&view_table=Perencanaan
+Afirmasi_realisasi | https://data.inaproc.id/afirmasi-pdn?tahun=2026&jenis=3&instansi=D376&view_table=Realisasi
+
+# Rencana Umum Pengadaan
+https://data.inaproc.id/rup?tahun=2026&jenis_klpd=3&instansi=D376
+
+# Realisasi
+https://data.inaproc.id/realisasi?tahun=2026&jenis=3&instansi=D376

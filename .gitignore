@@ -1,0 +1,55 @@
+# ---------------------------------------------------------------
+# Hasil proses aplikasi (jangan masuk repositori)
+# ---------------------------------------------------------------
+Downloads/*
+!Downloads/.gitkeep
+Logs/*
+!Logs/.gitkeep
+Old_script
+
+# Jaga-jaga bila berkas data tersimpan di luar folder Downloads
+*.crdownload
+
+# ---------------------------------------------------------------
+# Python
+# ---------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+build/
+dist/
+
+# Virtual environment
+venv/
+.venv/
+env/
+ENV/
+
+# Pengaturan rahasia/lokal (jika kelak dipakai)
+.env
+*.local
+
+# ---------------------------------------------------------------
+# Selenium / driver
+# ---------------------------------------------------------------
+.wdm/
+chromedriver
+chromedriver.exe
+geckodriver.log
+
+# ---------------------------------------------------------------
+# Editor dan IDE
+# ---------------------------------------------------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ---------------------------------------------------------------
+# Sistem operasi
+# ---------------------------------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+~$*
