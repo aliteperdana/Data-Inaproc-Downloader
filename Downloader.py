@@ -253,7 +253,12 @@ def main():
         return 1
     log.info("Jumlah link: %d", len(links))
 
-    driver = buat_driver()
+    try:
+        driver = buat_driver()
+    except Exception:
+        log.exception("Gagal membuka Chrome. Pastikan Google Chrome terpasang (lihat README, bagian Instalasi).")
+        return 3
+
     berhasil, gagal = 0, 0
     try:
         for i, (label, url) in enumerate(links, start=1):
