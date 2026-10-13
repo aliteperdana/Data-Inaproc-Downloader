@@ -1,6 +1,12 @@
+<img width="434" height="165" alt="image" src="https://github.com/user-attachments/assets/68486626-6f57-4182-bec9-903c3239de58" />
+
 # Inaproc Data Downloader
 
-Aplikasi baris perintah berbasis Python untuk mengunduh data tabel dari dashboard [data.inaproc.id](https://data.inaproc.id) (misalnya Realisasi RUP dan Afirmasi PDN) secara otomatis. Cukup tambahkan tautan ke `links.txt`, jalankan skrip, dan hasilnya tersimpan sebagai CSV dan XLSX dengan nama yang rapi serta log proses.
+Aplikasi baris perintah berbasis Python untuk mengunduh data dari halaman dashboard [Data Inaproc](https://data.inaproc.id/) secara otomatis. Cukup tambahkan tautan ke `links.txt`, jalankan skrip, dan hasilnya tersimpan sebagai CSV dan XLSX dengan nama yang rapi serta log proses.
+
+<img width="214" height="87" alt="image" src="https://github.com/user-attachments/assets/9c546adb-2e2d-4488-ad59-86fcb007ed4b" />
+<img width="1903" height="908" alt="image" src="https://github.com/user-attachments/assets/2ffe11c1-e5a7-4316-b6da-06c406484809" />
+
 
 ## Fitur
 
@@ -11,6 +17,7 @@ Aplikasi baris perintah berbasis Python untuk mengunduh data tabel dari dashboar
 - Mengonversi CSV ke XLSX (header tebal dan dibekukan, lebar kolom menyesuaikan, kolom berisi "kode" disimpan sebagai teks).
 - Menulis log baru untuk setiap eksekusi di folder `Logs`.
 - Jika satu tautan gagal, tautan lain tetap diproses.
+- Dapat dijalankan terjadwal secara otomatis (Task Scheduler di Windows, cron di Linux/macOS).
 
 ## Persyaratan
 
@@ -65,6 +72,94 @@ Afirmasi PDN Ringkasan | https://data.inaproc.id/afirmasi-pdn?tahun=2026&jenis=3
 | Badge tidak ditemukan | waktu eksekusi dipakai sebagai pengganti waktu sinkron |
 
 Nama otomatis dibentuk dari nama halaman, `tahun`, `instansi`, dan `view_table` (jika ada) pada tautan.
+
+## Menjalankan Otomatis (Terjadwal)
+
+Aplikasi dapat dijalankan secara berkala tanpa campur tangan. Semua folder (`Downloads`, `Logs`) dihitung dari lokasi `Downloader.py`, jadi hasilnya sama walau dijalankan oleh penjadwal dari folder kerja mana pun.
+
+Prinsip yang berlaku untuk semua penjadwal:
+
+- Gunakan **path absolut** untuk Python dan `Downloader.py`. Jika memakai virtual environment, pakai Python di dalamnya agar dependensi ditemukan.
+- Komputer harus menyala dan terhubung internet pada jam yang dijadwalkan.
+- Hasil tiap eksekusi dapat dicek di folder `Logs`. Kode keluar `0` berarti semua berhasil, `2` berarti ada tautan yang gagal.
+
+### Windows (Task Scheduler)
+
+**Lewat PowerShell** (ganti path sesuai lokasi proyek Anda):
+
+```powershell
+$folder = "D:\Aplikasi\Data Inaproc Downloader"
+
+$aksi = New-ScheduledTaskAction `
+    -Execute "$folder\venv\Scripts\python.exe" `
+    -Argument "`"$folder\Downloader.py`"" `
+    -WorkingDirectory $folder
+
+$pemicu = New-ScheduledTaskTrigger -Daily -At 7:00AM
+
+$pengaturan = New-ScheduledTaskSettingsSet -StartWhenAvailable
+
+Register-ScheduledTask -TaskName "Inaproc Data Downloader" `
+    -Action $aksi -Trigger $pemicu -Settings $pengaturan `
+    -Description "Unduh data dashboard secara terjadwal"
+```
+
+Jika tidak memakai virtual environment, ganti nilai `-Execute` dengan path `python.exe` hasil perintah `(Get-Command python).Source`. Opsi `-StartWhenAvailable` membuat tugas dijalankan begitu komputer menyala jika jadwalnya terlewat.
+
+Untuk jadwal lain, ubah pemicunya, misalnya mingguan setiap Senin:
+
+```powershell
+$pemicu = New-ScheduledTaskTrigger -Weekly -DaysOfWeek Monday -At 7:00AM
+```
+
+**Uji dan kelola:**
+
+```powershell
+Start-ScheduledTask -TaskName "Inaproc Data Downloader"       # jalankan sekarang
+Get-ScheduledTaskInfo -TaskName "Inaproc Data Downloader"     # lihat hasil terakhir
+Unregister-ScheduledTask -TaskName "Inaproc Data Downloader" -Confirm:$false   # hapus
+```
+
+**Lewat antarmuka grafis:** buka *Task Scheduler* > *Create Task*, lalu isi:
+
+1. **General:** beri nama tugas. Centang *Run whether user is logged on or not* bila ingin tetap berjalan saat Anda tidak masuk.
+2. **Triggers:** *New* > pilih jadwal (harian, mingguan, dll.) dan jam.
+3. **Actions:** *New* > *Start a program*.
+   - *Program/script:* path `python.exe`
+   - *Add arguments:* `"D:\Aplikasi\Data Inaproc Downloader\Downloader.py"`
+   - *Start in:* `D:\Aplikasi\Data Inaproc Downloader`
+4. **Settings:** centang *Run task as soon as possible after a scheduled start is missed*.
+
+### Linux / macOS (cron)
+
+Buka daftar cron:
+
+```bash
+crontab -e
+```
+
+Tambahkan satu baris (ganti path sesuai lokasi proyek Anda), contoh setiap hari pukul 07.00:
+
+```cron
+0 7 * * * /home/pengguna/inaproc-downloader/venv/bin/python /home/pengguna/inaproc-downloader/Downloader.py
+```
+
+Format jadwal cron: `menit jam tanggal bulan hari-dalam-minggu`.
+
+| Jadwal | Penulisan |
+|---|---|
+| Setiap hari pukul 07.00 | `0 7 * * *` |
+| Setiap Senin pukul 07.00 | `0 7 * * 1` |
+| Setiap 6 jam | `0 */6 * * *` |
+| Setiap hari kerja pukul 08.30 | `30 8 * * 1-5` |
+
+Lihat jadwal yang aktif dengan `crontab -l`. Cron berjalan dengan lingkungan yang minimal, sehingga path absolut wajib dipakai. Kalau tugas tidak berjalan, periksa log sistem (`grep CRON /var/log/syslog` di Debian/Ubuntu) dan folder `Logs` proyek.
+
+### Catatan untuk eksekusi terjadwal
+
+- Setiap eksekusi menambah berkas baru di `Downloads` dan `Logs` dan tidak ada penghapusan otomatis. Bersihkan berkas lama secara berkala agar penyimpanan tidak penuh.
+- Gunakan frekuensi yang wajar. Data di halaman hanya berubah saat disinkronkan, jadi unduhan yang terlalu sering akan menghasilkan berkas yang isinya sama.
+- Pertama kali dijalankan, driver Chrome diunduh otomatis sehingga membutuhkan internet.
 
 ## Struktur Folder
 
