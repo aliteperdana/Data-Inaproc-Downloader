@@ -1,6 +1,6 @@
 <img width="434" height="165" alt="image" src="https://github.com/user-attachments/assets/68486626-6f57-4182-bec9-903c3239de58" />
 
-# Inaproc Data Downloader
+# Data Inaproc Downloader
 
 Aplikasi baris perintah berbasis Python untuk mengunduh data dari halaman dashboard [Data Inaproc](https://data.inaproc.id/) secara otomatis. Cukup tambahkan tautan ke `links.txt`, jalankan skrip, dan hasilnya tersimpan sebagai CSV dan XLSX dengan nama yang rapi serta log proses.
 
@@ -99,7 +99,7 @@ $pemicu = New-ScheduledTaskTrigger -Daily -At 7:00AM
 
 $pengaturan = New-ScheduledTaskSettingsSet -StartWhenAvailable
 
-Register-ScheduledTask -TaskName "Inaproc Data Downloader" `
+Register-ScheduledTask -TaskName "Data Inaproc Downloader" `
     -Action $aksi -Trigger $pemicu -Settings $pengaturan `
     -Description "Unduh data dashboard secara terjadwal"
 ```
@@ -115,9 +115,9 @@ $pemicu = New-ScheduledTaskTrigger -Weekly -DaysOfWeek Monday -At 7:00AM
 **Uji dan kelola:**
 
 ```powershell
-Start-ScheduledTask -TaskName "Inaproc Data Downloader"       # jalankan sekarang
-Get-ScheduledTaskInfo -TaskName "Inaproc Data Downloader"     # lihat hasil terakhir
-Unregister-ScheduledTask -TaskName "Inaproc Data Downloader" -Confirm:$false   # hapus
+Start-ScheduledTask -TaskName "Data Inaproc Downloader"       # jalankan sekarang
+Get-ScheduledTaskInfo -TaskName "Data Inaproc Downloader"     # lihat hasil terakhir
+Unregister-ScheduledTask -TaskName "Data Inaproc Downloader" -Confirm:$false   # hapus
 ```
 
 **Lewat antarmuka grafis:** buka *Task Scheduler* > *Create Task*, lalu isi:
@@ -141,7 +141,7 @@ crontab -e
 Tambahkan satu baris (ganti path sesuai lokasi proyek Anda), contoh setiap hari pukul 07.00:
 
 ```cron
-0 7 * * * /home/pengguna/inaproc-downloader/venv/bin/python /home/pengguna/inaproc-downloader/Downloader.py
+0 7 * * * /home/pengguna/Data-Inaproc-Downloader/venv/bin/python /home/pengguna/Data-Inaproc-Downloader/Downloader.py
 ```
 
 Format jadwal cron: `menit jam tanggal bulan hari-dalam-minggu`.
